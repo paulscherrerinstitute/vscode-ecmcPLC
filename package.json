@@ -1,0 +1,29 @@
+{
+  "name": "vscode-ecmcPLC",
+  "displayName": "vscode-ecmcPLC",
+  "description": "ECMC PLC syntax highlight",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "*"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "publisher": "PSI",
+  "repository": {
+    "url": "https://github.com/paulscherrerinstitue/vscode-ecmcPLC"
+  },
+  "contributes": {
+    "languages": [{
+      "id": "ecmcPLC",
+      "aliases": ["ecmcPLC"],
+      "extensions": [".plc"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "ecmcPLC",
+      "scopeName": "source.ecmcPLC",
+      "path": "./syntaxes/ecmcPLC.tmLanguage.json"
+    }]
+  }
+}

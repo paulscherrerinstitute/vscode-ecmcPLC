@@ -1,0 +1,213 @@
+{
+    "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+    "name": "ecmcPLC",
+    "scopeName": "source.ecmcPLC",
+    "patterns": [
+        {
+            "include": "#comments"
+        },
+        {
+            "include": "#keywords"
+        },
+        {
+            "include": "#operators"
+        },
+        {
+            "include": "#functions"
+        },
+        {
+            "include": "#numbers"
+        },
+        {
+            "include": "#variables"
+        },
+        {
+            "include": "#strings"
+        },
+        {
+            "include": "#macros"
+        },
+        {
+            "include": "#blocks"
+        }
+    ],
+    "repository": {
+        "keywords": {
+            "patterns": [
+                {
+                    "name": "keyword.operator.logical.ecmcPLC",
+                    "match": "\\b(and|mand|mor|nand|nor|not|or|shl|shr|xnor|xor|true|false)\\b"
+                },
+                {
+                    "name": "keyword.control",
+                    "match": "\\b(for|while|if|else|return|switch|case|repeat|until|break|continue)\\b"
+                },
+                {
+                    "name": "storage.type.ecmcPLC",
+                    "match": "\\b(var)\\b"
+                }
+            ]
+        },
+        "operators": {
+            "patterns": [
+                {
+                    "match": "\\+=|-=|\\*=|(?<!\\()/=",
+                    "name": "keyword.operator.assignment.compound.ecmcPLC"
+                },
+                {
+                    "match": "<>|!=|<=|>=|==|<|>",
+                    "name": "keyword.operator.comparison.ecmcPLC"
+                },
+                {
+                    "match": "%=|\\+=|-=|\\*=|(?<!\\()/=",
+                    "name": "keyword.operator.assignment.compound.ecmcPLC"
+                },
+                {
+                    "match": ":=",
+                    "name": "keyword.operator.assignment.ecmcPLC"
+                },
+                {
+                    "match": "\\+|-|\\*|/|%|\\^",
+                    "name": "keyword.operator.ecmcPLC"
+                }
+            ]
+        },
+        "functions": {
+            "patterns": [
+                {
+                    "name": "support.function.math.ecmcPLC",
+                    "match": "\\b(abs|avg|ceil|clamp|dot|equal|erf|erfc|exp|expm1|floor|frac|log|log10|log1p|log2|logn|max|min|mul|ncdf|not_equal|root|round|roundn|sgn|sqrt|sum|swap|trunc|println)\\b"
+                },
+                {
+                    "name": "support.function.trigometry.ecmcPLC",
+                    "match": "\\b(acos|acosh|asin|asinh|atan|atanh|atan2|cos|cosh|cot|csc|sec|sin|sinc|sinh|tan|tanh|hypot|rad2deg|deg2grad|deg2rad|grad2deg)\\b"
+                },
+                {
+                    "name": "support.function.ecmc.ecmcPLC",
+                    "match": "\\bmc[0-9a-zA-Z_]+\\b"
+                }
+            ]
+        },
+        "variables": {
+            "name": "variable.other.ecmcPLC",
+            "patterns": [
+                {
+                    "include": "#macros"
+                },
+                {
+                    "include": "#macro_ref"
+                }
+            ]
+        },
+        "numbers": {
+            "patterns": [
+		{
+			"match": "(?<![\\w\\d.])0[xX][0-9A-Fa-f]+(\\.[0-9A-Fa-f]*)?([eE]-?\\d*)?([pP][-+]\\d+)?",
+			"name": "constant.numeric.float.hexadecimal.ecmcPLC"
+		},
+		{
+			"match": "(?<![\\w\\d.])0[xX]\\.[0-9A-Fa-f]+([eE]-?\\d*)?([pP][-+]\\d+)?",
+			"name": "constant.numeric.float.hexadecimal.ecmcPLC"
+		},
+		{
+			"match": "(?<![\\w\\d.])0[xX][0-9A-Fa-f]+(?![pPeE.0-9])",
+			"name": "constant.numeric.integer.hexadecimal.ecmcPLC"
+		},
+		{
+			"match": "(?<![\\w\\d.])\\d+(\\.\\d*)?([eE]-?\\d*)?",
+			"name": "constant.numeric.float.ecmcPLC"
+		},
+		{
+			"match": "(?<![\\w\\d.])\\.\\d+([eE]-?\\d*)?",
+			"name": "constant.numeric.float.ecmcPLC"
+		},
+		{
+			"match": "(?<![\\w\\d.])\\d+(?![pPeE.0-9])",
+			"name": "constant.numeric.integer.ecmcPLC"
+		}
+            ]
+        },
+        "comments": {
+            "name": "comment.line.number-sign.ecmcPLC",
+            "begin": "#",
+            "end": "$",
+            "patterns": [
+                {
+                    "name": "constant.character.escape.ecmcPLC",
+                    "match": "\\\\."
+                }
+            ]
+        },
+        "strings": {
+            "patterns": [
+                {
+                    "begin": "'",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.begin.ecmcPLC"
+                        }
+                    },
+                    "end": "'[ \\t]*|(?=\\n)",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.end.ecmcPLC"
+                        }
+                    },
+                    "name": "string.quoted.single.ecmcPLC",
+                    "patterns": [
+                        {
+                            "include": "#escaped_char"
+                        }
+                    ]
+                }
+            ]
+        },
+        "macros": {
+            "patterns": [
+                {
+                    "name": "variable.parameter.epics.ecmcPLC",
+                    "begin": "\\$\\{",
+                    "end": "\\}",
+                    "patterns": [ { "include": "#macro_ref" } ]
+                },
+                {
+                    "name": "variable.parameter.epics.ecmcPLC",
+                    "begin": "\\$\\(",
+                    "end": "\\)",
+                    "patterns": [ { "include": "#macro_ref" } ]
+                }
+            ]
+        },
+        "macro_ref": {
+            "patterns": [
+                {
+                    "name": "variable.parameter.epics.ecmcPLC",
+                    "match": "[A-Z+a-z+0-9+_]+"
+                }
+            ]
+        },
+        "blocks": {
+            "name": "meta.block.ecmcPLC",
+            "begin": "\\{",
+            "end": "\\}",
+            "patterns": [
+                {
+                    "include": "$self"
+                }
+            ]
+        },
+        "escaped_char": {
+            "patterns": [
+                {
+                    "name": "constant.character.escape.ecmcPLC",
+                    "match": "\\\\[nrtbvf]"
+                },
+                {
+                    "name": "constant.character.escape.byte.ecmcPLC",
+                    "match": "\\\\0x[0-9A-Fa-f]{2}"
+                }
+
+            ]
+        }
+    }
+}
