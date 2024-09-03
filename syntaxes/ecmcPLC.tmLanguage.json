@@ -43,6 +43,10 @@
                     "match": "\\b(for|while|if|else|return|switch|case|repeat|until|break|continue)\\b"
                 },
                 {
+                    "name": "keyword.control.msi.ecmcPLC",
+                    "match": "\\b(include|substitute)\\b"
+                },
+                {
                     "name": "storage.type.ecmcPLC",
                     "match": "\\b(var)\\b"
                 }
