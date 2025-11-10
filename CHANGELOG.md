@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 0.0.3 - 2025-11-10
+- Add axis YAML schema
+
 ## Version 0.0.2 - 2024-09-02
 - Add MSI keywords include and substitute
 - Add C style comment "/* */"
