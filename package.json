@@ -29,7 +29,7 @@
     "yamlValidation": [
       {
         "fileMatch": ["**/ax*.yaml"],
-        "url": "./schemas/ecmcPLC-schema.json"
+        "url": "./schemas/ecmcAxis-schema.json"
       }
     ]
   }
