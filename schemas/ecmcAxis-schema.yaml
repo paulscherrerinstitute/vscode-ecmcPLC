@@ -1,0 +1,1546 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "ecmcAxis",
+  "description": "An ecmc axis object",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "var": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {}
+    },
+    "axis": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "oneof": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string",
+              "regex": "^\\$(\\{|\\()\\w*(=\\d*)?(\\}|\\))$"
+            }
+          ],
+          "description": "unique axis identifier"
+        },
+        "type": {
+          "type": [
+            "string",
+            "integer"
+          ],
+          "default": "joint"
+        },
+        "mode": {
+          "type": "string",
+          "default": "CSV",
+          "enum": [
+            "CSV",
+            "CSP",
+            "CSP_PC"
+          ]
+        },
+        "parameters": {
+          "type": "string"
+        },
+        "healthOutput": {
+          "type": "string"
+        },
+        "feedSwitchesOutput": {
+          "type": "string",
+          "description": "EtherCAT entry to control feed switches"
+        },
+        "feedSwitchesValue": {
+          "type": "integer",
+          "description": "Value to enable feed switches"
+        },
+        "group": {
+          "type": "string",
+          "description": "Add axis to group (group will be created if not exists), group id will be stored in GRP<axis.group>_ID for later use."
+        },
+        "tweakDist": {
+          "type": "number",
+          "default": 1.0,
+          "description": "Tweak value (both ecmc interface and motor record tweak value)"
+        },
+        "autoEnable": {
+          "type": "object",
+          "description": "ecmc auto enable of axis (Please use this instead of motor record version..)",
+          "additionalProperties": false,
+          "properties": {
+            "enableTimeout": {
+              "type": "number",
+              "default": -1.0,
+              "description": "If defined, ecmc tries to auto-enable for a maximum enableTimeout seconds."
+            },
+            "disableTimeout": {
+              "type": "number",
+              "default": -1.0,
+              "description": "If defined, ecmc disables axis after idle (non busy) in disableTime seconds."
+            },
+            "atStartup": {
+              "type": [
+                "boolean",
+                "string"
+              ],
+              "default": false,
+              "description": "Auto enable axis at ioc start.",
+              "enum": [
+                "yes",
+                "no",
+                true,
+                false
+              ]
+            }
+          }
+        },
+        "autoMode": {
+          "type": "object",
+          "description": "Switch drive modes automaticaly for normal motion and homing (smaract for instance)",
+          "additionalProperties": false,
+          "properties": {
+            "modeSet": {
+              "type": "string",
+              "description": "Ethercat entry drive mode write (set CSV,CSP,homing)"
+            },
+            "modeAct": {
+              "type": "string",
+              "description": "Ethercat entry drive mode reading (set CSV,CSP,homing)"
+            },
+            "modeCmdMotion": {
+              "type": "integer",
+              "description": "Drive mode value for normal motion (written to axis.autoMode.modeSet when normal motion)"
+            },
+            "modeCmdHome": {
+              "type": "integer",
+              "description": "Drive mode value for when homing (written to axis.drvMode.modeSet when homing)"
+            }
+          }
+        },
+        "features": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "disableOnReset": {
+              "type": [
+                "boolean",
+                "string"
+              ],
+              "description": "???",
+              "enum": [
+                "yes",
+                "no",
+                true,
+                false
+              ]
+            },
+            "alarmAtHardLimits": {
+              "type": [
+                "boolean",
+                "string"
+              ],
+              "description": "???",
+              "enum": [
+                "yes",
+                "no",
+                true,
+                false
+              ]
+            },
+            "blockCom": {
+              "type": [
+                "boolean",
+                "string"
+              ],
+              "description": "Block communication to axis",
+              "enum": [
+                "yes",
+                "no",
+                true,
+                false
+              ]
+            },
+            "allowSrcChangeWhenEnabled": {
+              "type": [
+                "boolean",
+                "string"
+              ],
+              "description": "Allow traj/enc source change when axis is enabled",
+              "enum": [
+                "yes",
+                "no",
+                true,
+                false
+              ]
+            },
+            "allowedFunctions": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "positioning": {
+                  "type": [
+                    "boolean",
+                    "string"
+                  ],
+                  "description": "Allow positioning",
+                  "enum": [
+                    "yes",
+                    "no",
+                    true,
+                    false
+                  ]
+                },
+                "constantVelocity": {
+                  "type": [
+                    "boolean",
+                    "string"
+                  ],
+                  "description": "Allow constant velocity",
+                  "enum": [
+                    "yes",
+                    "no",
+                    true,
+                    false
+                  ]
+                },
+                "homing": {
+                  "type": [
+                    "boolean",
+                    "string"
+                  ],
+                  "description": "Allow homing",
+                  "enum": [
+                    "yes",
+                    "no",
+                    true,
+                    false
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "epics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "default": "axis",
+          "description": "Axis name"
+        },
+        "precision": {
+          "type": "integer",
+          "min": 0,
+          "default": 3,
+          "description": "Decimal count"
+        },
+        "unit": {
+          "type": "string",
+          "default": "mm",
+          "description": "Unit"
+        },
+        "motorRecord": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enable": {
+              "type": [
+                "boolean",
+                "string"
+              ],
+              "default": true,
+              "description": "Load motor record",
+              "enum": [
+                "yes",
+                "no",
+                true,
+                false
+              ]
+            },
+            "fieldInit": {
+              "type": "string",
+              "description": "Additional motor record field initializations"
+            },
+            "description": {
+              "type": "string",
+              "description": "Motor record DESC field"
+            },
+            "pvt": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "npoints": {
+                  "default": 0,
+                  "description": "???"
+                },
+                "nreadback": {
+                  "default": 0,
+                  "description": "???"
+                }
+              }
+            },
+            "syncSoftLimits": {
+              "type": [
+                "boolean",
+                "string"
+              ],
+              "default": false,
+              "description": "Sync softlimits between motor and ecmc",
+              "enum": [
+                "yes",
+                "no",
+                true,
+                false
+              ]
+            }
+          }
+        }
+      }
+    },
+    "encoder": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "type": "integer",
+          "default": 0,
+          "description": "0 = Encoder value from etehrcat hardware, 1 = Encoder value from PLC",
+          "enum": [
+            0,
+            1
+          ]
+        },
+        "numerator": {
+          "oneof": [
+            {
+              "type": "float"
+            },
+            {
+              "type": "string",
+              "regex": "^\\$(\\{|\\()\\w*(=\\d*(\\.\\d*)?)?(\\}|\\))$"
+            }
+          ],
+          "default": 0.0,
+          "description": "Scaling numerator"
+        },
+        "denominator": {
+          "type": "integer",
+          "default": 1,
+          "min": 1,
+          "description": "Scaling denominator"
+        },
+        "type": {
+          "type": "integer",
+          "default": 0,
+          "description": "Type: 0=Incremental, 1=Absolute",
+          "enum": [
+            0,
+            1
+          ]
+        },
+        "mask": {
+          "type": "string",
+          "description": "???"
+        },
+        "bits": {
+          "type": "integer",
+          "min": 0,
+          "max": 64,
+          "default": 16,
+          "description": "Total bit count of encoder raw data"
+        },
+        "absBits": {
+          "type": "integer",
+          "min": 0,
+          "max": 64,
+          "default": 25,
+          "description": "Absolute bit count (for absolute encoders) always least significant part of \"bits\""
+        },
+        "absOffset": {
+          "oneof": [
+            {
+              "type": "float"
+            },
+            {
+              "type": "string",
+              "regex": "^\\$(\\{|\\()\\w*(=\\d*(\\.\\d*)?)?(\\}|\\))$"
+            }
+          ],
+          "default": 0.0,
+          "description": "Encoder offset in engineering units (for absolute encoders)"
+        },
+        "lookuptable": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "filename": {
+              "type": "string",
+              "description": "Load correction lockuptable file (default enabled if loaded)"
+            },
+            "range": {
+              "type": "number",
+              "description": "???"
+            },
+            "scale": {
+              "type": "number",
+              "description": "???"
+            },
+            "enable": {
+              "type": [
+                "boolean",
+                "string"
+              ],
+              "description": "Enable lookup table correction",
+              "enum": [
+                "yes",
+                "no",
+                true,
+                false
+              ]
+            }
+          },
+          "required": [
+            "filename"
+          ]
+        },
+        "unit": {
+          "type": "string",
+          "description": "Unit"
+        },
+        "delayComp": {
+          "type": "object",
+          "description": "Delay compensation for time between application of setpoint to reading of encoder (normally atleast 1 cycle)",
+          "additionalProperties": false,
+          "properties": {
+            "time": {
+              "type": "number",
+              "description": "Delay time between set and act [cycles]"
+            },
+            "enable": {
+              "type": [
+                "boolean",
+                "string"
+              ],
+              "description": "enable (defaults to 1 if not set)",
+              "enum": [
+                "yes",
+                "no",
+                true,
+                false
+              ]
+            }
+          },
+          "required": [
+            "time"
+          ]
+        },
+        "desc": {
+          "type": "string"
+        },
+        "position": {
+          "type": "string",
+          "description": "Ethercat entry for actual position input"
+        },
+        "control": {
+          "type": "string",
+          "description": "EtherCAT entry for encoder control word"
+        },
+        "status": {
+          "type": "string",
+          "description": "EtherCAT entry for encoder status word"
+        },
+        "warning": {
+          "type": "integer",
+          "min": 0,
+          "dependencies": {
+            "anyOf": [
+              "status"
+            ]
+          },
+          "description": "Status word bit for encoder warning"
+        },
+        "ready": {
+          "type": "integer",
+          "min": 0,
+          "dependencies": {
+            "anyOf": [
+              "status"
+            ]
+          },
+          "description": "Status word bit for encoder ready"
+        },
+        "reset": {
+          "type": "integer",
+          "min": 0,
+          "dependencies": {
+            "anyOf": [
+              "control"
+            ]
+          },
+          "description": "Control word bit to reset the encoder"
+        },
+        "error": {
+          "type": "array",
+          "dependencies": {
+            "anyOf": [
+              "status"
+            ]
+          },
+          "description": "List of status bits for encoder errors",
+          "items": {
+            "type": [
+              "integer",
+              "string"
+            ]
+          },
+          "maxLength": 3
+        },
+        "filter": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "velocity": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "enable": {
+                  "type": [
+                    "boolean",
+                    "string"
+                  ],
+                  "enum": [
+                    "yes",
+                    "no",
+                    true,
+                    false
+                  ]
+                },
+                "size": {
+                  "type": "integer"
+                }
+              }
+            },
+            "trajectory": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "enable": {
+                  "type": [
+                    "boolean",
+                    "string"
+                  ],
+                  "enum": [
+                    "yes",
+                    "no",
+                    true,
+                    false
+                  ]
+                },
+                "size": {
+                  "type": "integer"
+                }
+              }
+            },
+            "position": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "enable": {
+                  "type": [
+                    "boolean",
+                    "string"
+                  ],
+                  "enum": [
+                    "yes",
+                    "no",
+                    true,
+                    false
+                  ]
+                },
+                "size": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "latch": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "position": {
+              "type": "string",
+              "description": "???"
+            },
+            "control": {
+              "type": "integer",
+              "default": 0,
+              "description": "Control word bit to arm latch. Used for some homing seqs"
+            },
+            "armCmd": {
+              "type": "integer",
+              "default": 1,
+              "description": "Value in dec to arm latch/touch probe"
+            },
+            "armBits": {
+              "type": "integer",
+              "default": 1,
+              "description": "Bit size of encoder.latch.armCmd"
+            },
+            "status": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          "required": [
+            "position"
+          ]
+        },
+        "primary": {
+          "description": "Use this encoder as primary (for control)",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "integer"
+            }
+          ]
+        },
+        "homing": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "type": "integer",
+              "enum": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                14,
+                15,
+                21,
+                22,
+                25,
+                26
+              ]
+            },
+            "position": {
+              "oneof": [
+                {
+                  "type": "float"
+                },
+                {
+                  "type": "string",
+                  "regex": "^\\$(\\{|\\()\\w*(=\\d*(\\.\\d*)?)?(\\}|\\))$"
+                }
+              ]
+            },
+            "postMoveEnable": {
+              "type": [
+                "boolean",
+                "string"
+              ],
+              "dependencies": {
+                "anyOf": [
+                  "postMovePosition"
+                ]
+              },
+              "enum": [
+                "yes",
+                "no",
+                true,
+                false
+              ]
+            },
+            "postMovePosition": {
+              "oneof": [
+                {
+                  "type": "float"
+                },
+                {
+                  "type": "string",
+                  "regex": "^\\$(\\{|\\()\\w*(=\\d*(\\.\\d*)?)?(\\}|\\))$"
+                }
+              ]
+            },
+            "latchCount": {
+              "type": "integer",
+              "min": 0
+            },
+            "velocity": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "to": {
+                  "type": "number"
+                },
+                "from": {
+                  "type": "number"
+                }
+              }
+            },
+            "acceleration": {
+              "type": "number"
+            },
+            "deceleration": {
+              "type": "number"
+            },
+            "timeout": {
+              "type": "integer"
+            },
+            "refToEncIDAtStartup": {
+              "type": "integer",
+              "default": -1
+            },
+            "refAtHome": {
+              "type": "integer",
+              "default": 0
+            },
+            "tolToPrim": {
+              "type": "number",
+              "default": 0
+            },
+            "trigg": {
+              "type": "string"
+            },
+            "ready": {
+              "type": "string"
+            }
+          }
+        },
+        "useAsCSPDrvEnc": {
+          "description": "Use this encoder as CSP drive encoder (ecmc controller enabled in CSP)",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "integer"
+            }
+          ]
+        }
+      }
+    },
+    "drive": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "numerator": {
+          "type": "number",
+          "default": 0,
+          "description": "Fastest speed in engineering units"
+        },
+        "denominator": {
+          "type": "integer",
+          "default": 1,
+          "min": 1,
+          "description": "I/O range for ECMC_EC_ALIAS_DRV_VELO_SET"
+        },
+        "type": {
+          "type": "integer",
+          "default": 0,
+          "description": "Stepper: 0. DS402: 1 (DS402 = servos and advanced stepper drives)",
+          "enum": [
+            0,
+            1
+          ]
+        },
+        "setpoint": {
+          "type": "string",
+          "description": "Velocity setpoint if CSV. Position setpoint if CSP."
+        },
+        "control": {
+          "type": "string",
+          "description": "EtherCAT entry for control word"
+        },
+        "status": {
+          "type": "string",
+          "description": "EtherCAT entry for status word"
+        },
+        "reduceTorqueEnable": {
+          "type": [
+            "boolean",
+            "string"
+          ],
+          "dependencies": {
+            "anyOf": [
+              "control",
+              "reduceTorque"
+            ]
+          },
+          "description": "Enable reduce torque functionality",
+          "enum": [
+            "yes",
+            "no",
+            true,
+            false
+          ]
+        },
+        "reduceTorque": {
+          "type": "integer",
+          "min": 0,
+          "dependencies": {
+            "anyOf": [
+              "control",
+              "reduceTorqueEnable"
+            ]
+          },
+          "description": "Reduce torque bit in drive control word"
+        },
+        "enable": {
+          "type": "integer",
+          "min": 0,
+          "dependencies": {
+            "anyOf": [
+              "control"
+            ]
+          },
+          "description": "Enable bit index in control word (not used if DS402)"
+        },
+        "enabled": {
+          "type": "integer",
+          "min": 0,
+          "dependencies": {
+            "anyOf": [
+              "status"
+            ]
+          },
+          "description": "Enabled bit index in status word (not used if DS402)"
+        },
+        "brake": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enable": {
+              "type": [
+                "boolean",
+                "string"
+              ],
+              "description": "Enable brake control",
+              "enum": [
+                "yes",
+                "no",
+                true,
+                false
+              ]
+            },
+            "output": {
+              "type": "string",
+              "description": "EtherCAT entry to control brake"
+            },
+            "openDelay": {
+              "type": "integer",
+              "min": 0,
+              "default": 0,
+              "description": "number of cycles to wait after enable to disengage the brake"
+            },
+            "closeAhead": {
+              "type": "integer",
+              "min": 0,
+              "default": 0,
+              "description": "number of cycles to wait after the brake was engaged"
+            }
+          },
+          "required": [
+            "enable",
+            "output"
+          ]
+        },
+        "warning": {
+          "type": "integer",
+          "min": 0,
+          "dependencies": {
+            "anyOf": [
+              "status"
+            ]
+          },
+          "description": "status word bit for drive warning"
+        },
+        "reset": {
+          "type": "integer",
+          "min": 0,
+          "dependencies": {
+            "anyOf": [
+              "control"
+            ]
+          },
+          "description": "control word bit to reset the drive"
+        },
+        "error": {
+          "type": "array",
+          "dependencies": {
+            "anyOf": [
+              "status"
+            ]
+          },
+          "description": "list of status bits for drive errors",
+          "items": {
+            "type": [
+              "integer",
+              "string"
+            ]
+          },
+          "maxLength": 3
+        }
+      },
+      "required": [
+        "setpoint",
+        "control"
+      ]
+    },
+    "controller": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Kp": {
+          "type": "number",
+          "default": 1.0,
+          "min": 0
+        },
+        "Ki": {
+          "type": "number",
+          "default": 0.0,
+          "min": 0
+        },
+        "Kd": {
+          "type": "number",
+          "default": 0.0,
+          "min": 0
+        },
+        "Kff": {
+          "type": "number",
+          "default": 1.0,
+          "min": 0
+        },
+        "inner": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "Kp": {
+              "type": "number",
+              "default": 1.0,
+              "min": 0
+            },
+            "Ki": {
+              "type": "number",
+              "default": 0.0,
+              "min": 0
+            },
+            "Kd": {
+              "type": "number",
+              "default": 0.0,
+              "min": 0
+            },
+            "tol": {
+              "type": "number",
+              "default": 0.0,
+              "min": 0
+            }
+          }
+        },
+        "limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "minOutput": {
+              "type": "number"
+            },
+            "maxOutput": {
+              "type": "number"
+            },
+            "minIntegral": {
+              "type": "number"
+            },
+            "maxIntegral": {
+              "type": "number"
+            }
+          }
+        },
+        "deadband": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "tol": {
+              "type": "number",
+              "min": 0
+            },
+            "time": {
+              "type": "integer",
+              "min": 0
+            }
+          }
+        }
+      }
+    },
+    "trajectory": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "type": "integer",
+          "default": 0,
+          "enum": [
+            0,
+            1
+          ]
+        },
+        "type": {
+          "type": "integer",
+          "default": 0,
+          "enum": [
+            0,
+            1
+          ]
+        },
+        "axis": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "velocity": {
+              "type": "number"
+            },
+            "acceleration": {
+              "type": "number"
+            },
+            "jerk": {
+              "type": "number"
+            },
+            "deceleration": {
+              "type": "number"
+            },
+            "emergencyDeceleration": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "velocity",
+            "acceleration"
+          ]
+        },
+        "jog": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "velocity": {
+              "type": "number"
+            },
+            "acceleration": {
+              "type": "number"
+            }
+          }
+        },
+        "modulo": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "range": {
+              "type": "number",
+              "default": 0.0
+            },
+            "type": {
+              "type": "integer",
+              "default": 0,
+              "enum": [
+                0,
+                1,
+                2,
+                3
+              ]
+            }
+          }
+        }
+      },
+      "required": [
+        "axis"
+      ]
+    },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "forward": {
+              "type": "string"
+            },
+            "forwardPolarity": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "backward": {
+              "type": "string"
+            },
+            "backwardPolarity": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "latchInput": {
+              "type": [
+                "boolean",
+                "string"
+              ],
+              "enum": [
+                "yes",
+                "no",
+                true,
+                false
+              ]
+            }
+          },
+          "required": [
+            "forward",
+            "backward"
+          ]
+        },
+        "home": {
+          "type": "string"
+        },
+        "homePolarity": {
+          "type": "integer",
+          "enum": [
+            0,
+            1
+          ]
+        },
+        "interlock": {
+          "type": "string"
+        },
+        "interlockPolarity": {
+          "type": "integer",
+          "enum": [
+            0,
+            1
+          ]
+        },
+        "analog": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "interlock": {
+              "type": "string"
+            },
+            "rawLimit": {
+              "type": "number"
+            },
+            "interlockPolarity": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "enable": {
+              "type": [
+                "boolean",
+                "string"
+              ],
+              "enum": [
+                "yes",
+                "no",
+                true,
+                false
+              ]
+            }
+          }
+        }
+      },
+      "required": [
+        "limit"
+      ]
+    },
+    "plc": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "enable": {
+          "type": [
+            "boolean",
+            "string"
+          ],
+          "enum": [
+            "yes",
+            "no",
+            true,
+            false
+          ]
+        },
+        "rateMilliseconds": {
+          "type": "integer"
+        },
+        "file": {
+          "type": "string"
+        },
+        "macros": {
+          "type": "string"
+        },
+        "code": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string"
+            ]
+          }
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "softlimits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enable": {
+          "type": [
+            "boolean",
+            "string"
+          ],
+          "enum": [
+            "yes",
+            "no",
+            true,
+            false
+          ]
+        },
+        "forwardEnable": {
+          "type": [
+            "boolean",
+            "string"
+          ],
+          "dependencies": {
+            "anyOf": [
+              "forward",
+              "enable"
+            ]
+          },
+          "enum": [
+            "yes",
+            "no",
+            true,
+            false
+          ]
+        },
+        "forward": {
+          "type": "number",
+          "dependencies": {
+            "anyOf": [
+              "forwardEnable"
+            ]
+          }
+        },
+        "backwardEnable": {
+          "type": [
+            "boolean",
+            "string"
+          ],
+          "dependencies": {
+            "anyOf": [
+              "backward",
+              "enable"
+            ]
+          },
+          "enum": [
+            "yes",
+            "no",
+            true,
+            false
+          ]
+        },
+        "backward": {
+          "type": "number",
+          "dependencies": {
+            "anyOf": [
+              "backwardEnable"
+            ]
+          }
+        }
+      }
+    },
+    "monitoring": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "lag": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enable": {
+              "type": [
+                "boolean",
+                "string"
+              ],
+              "dependencies": {
+                "anyOf": [
+                  "tolerance",
+                  "time"
+                ]
+              },
+              "enum": [
+                "yes",
+                "no",
+                true,
+                false
+              ]
+            },
+            "tolerance": {
+              "type": "number",
+              "min": 0.0
+            },
+            "time": {
+              "type": "integer",
+              "min": 0
+            }
+          },
+          "required": [
+            "enable"
+          ]
+        },
+        "target": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enable": {
+              "type": [
+                "boolean",
+                "string"
+              ],
+              "dependencies": {
+                "anyOf": [
+                  "tolerance",
+                  "time"
+                ]
+              },
+              "enum": [
+                "yes",
+                "no",
+                true,
+                false
+              ]
+            },
+            "tolerance": {
+              "type": "number",
+              "min": 0.0
+            },
+            "time": {
+              "type": "integer",
+              "min": 0
+            }
+          },
+          "required": [
+            "enable"
+          ]
+        },
+        "velocity": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enable": {
+              "type": [
+                "boolean",
+                "string"
+              ],
+              "dependencies": {
+                "anyOf": [
+                  "max",
+                  "time"
+                ]
+              },
+              "enum": [
+                "yes",
+                "no",
+                true,
+                false
+              ]
+            },
+            "max": {
+              "type": "number",
+              "min": 0.0
+            },
+            "time": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "trajectory": {
+                  "type": "integer",
+                  "min": 0
+                },
+                "drive": {
+                  "type": "integer",
+                  "min": 0
+                }
+              },
+              "required": [
+                "trajectory"
+              ]
+            }
+          },
+          "required": [
+            "enable"
+          ]
+        },
+        "velocityDifference": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enable": {
+              "type": [
+                "boolean",
+                "string"
+              ],
+              "dependencies": {
+                "anyOf": [
+                  "max",
+                  "time"
+                ]
+              },
+              "enum": [
+                "yes",
+                "no",
+                true,
+                false
+              ]
+            },
+            "max": {
+              "type": "number",
+              "min": 0.0
+            },
+            "time": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "trajectory": {
+                  "type": "integer",
+                  "min": 0
+                },
+                "drive": {
+                  "type": "integer",
+                  "min": 0
+                }
+              },
+              "required": [
+                "trajectory"
+              ]
+            }
+          },
+          "required": [
+            "enable"
+          ]
+        },
+        "stall": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enable": {
+              "type": [
+                "boolean",
+                "string"
+              ],
+              "enum": [
+                "yes",
+                "no",
+                true,
+                false
+              ]
+            },
+            "time": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "timeout": {
+                  "type": "integer",
+                  "min": 0
+                },
+                "factor": {
+                  "type": "number",
+                  "min": 0
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "author": {
+          "type": "string"
+        },
+        "facility": {
+          "type": "string",
+          "default": "SLS 2.0"
+        },
+        "device": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string"
+        },
+        "md5": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "required": [
+    "axis",
+    "encoder",
+    "drive",
+    "trajectory",
+    "input",
+    "plc"
+  ],
+  "if": {
+    "properties": {
+      "axis": {
+        "properties": {
+          "type": {
+            "enum": [
+              "2",
+              "e",
+              "ee",
+              "end_effector",
+              "endeffector",
+              "virtual"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "then": {
+    "not": {
+      "required": [
+        "drive",
+        "controller"
+      ]
+    }
+  }
+}

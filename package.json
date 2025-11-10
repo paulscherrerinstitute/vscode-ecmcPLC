@@ -13,6 +13,7 @@
   "repository": {
     "url": "https://github.com/paulscherrerinstitue/vscode-ecmcPLC"
   },
+  "extensionDependencies": ["redhat.vscode-yaml"],
   "contributes": {
     "languages": [{
       "id": "ecmcPLC",
@@ -24,6 +25,12 @@
       "language": "ecmcPLC",
       "scopeName": "source.ecmcPLC",
       "path": "./syntaxes/ecmcPLC.tmLanguage.json"
-    }]
+    }],
+    "yamlValidation": [
+      {
+        "fileMatch": ["**/ax*.yaml"],
+        "url": "./schemas/ecmcPLC-schema.json"
+      }
+    ]
   }
 }
