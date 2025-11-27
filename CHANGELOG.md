@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 0.0.4 - 2025-11-27
+- Mark "plc" field optional in axis schema
+
 ## Version 0.0.3 - 2025-11-10
 - Add axis YAML schema
 

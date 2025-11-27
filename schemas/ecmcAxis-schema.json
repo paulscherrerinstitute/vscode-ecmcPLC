@@ -1514,8 +1514,7 @@
     "encoder",
     "drive",
     "trajectory",
-    "input",
-    "plc"
+    "input"
   ],
   "if": {
     "properties": {
