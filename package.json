@@ -2,7 +2,7 @@
   "name": "vscode-ecmcPLC",
   "displayName": "vscode-ecmcPLC",
   "description": "ECMC PLC syntax highlight",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "engines": {
     "vscode": "*"
   },
