@@ -1512,7 +1512,6 @@
   "required": [
     "axis",
     "encoder",
-    "drive",
     "trajectory",
     "input"
   ],
@@ -1530,7 +1529,10 @@
               "virtual"
             ]
           }
-        }
+        },
+        "required": [
+          "type"
+        ]
       }
     }
   },
